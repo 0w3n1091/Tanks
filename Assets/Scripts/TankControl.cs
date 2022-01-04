@@ -4,59 +4,79 @@ using UnityEngine;
 
 public class TankControl : MonoBehaviour
 {
-    public enum MovementDirection {left, right, forward, back}
-    public MovementDirection direction;
-    public Rigidbody playerBody;
+    public Vector3 turnDirection = Vector3.forward;
+    public Rigidbody tankRB;
+    public GameObject bulletPrefab;
+    public Transform firePoint;
+    public bool isShooting;
 
-    [Range(0.0f, 1.0f)]
-    public float gameSpeed = 1f;
-    public float movementStep = 2f;
-    public bool inCollision;
-
-    public bool inMovement;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
     void Update()
     {
-        Vector3 direction = Vector3.zero;
+        PlayerMove();
+        
+        if (Input.GetKey(KeyCode.Space) && !isShooting)
+            PlayerShoot();
+    }
 
-        if (Input.GetKey(KeyCode.UpArrow) && !inMovement)
+    /// <summary>
+    /// Changes player position by detected inputs
+    /// </summary>
+    private void PlayerMove()
+    {
+        Vector3 movementDirection = Vector3.zero;
+        
+        if (Input.GetKey(KeyCode.UpArrow))
         {
-            direction = Vector3.forward;
-            inMovement = true;
-            
+            movementDirection = Vector3.forward;
+            turnDirection = Vector3.forward;
+
             transform.rotation = Quaternion.Euler(0f, 0f, 0f);                             
         }
 
-        if (Input.GetKey(KeyCode.DownArrow) && !inMovement)
+        else if (Input.GetKey(KeyCode.DownArrow))
         {
-            direction = Vector3.back;
-            inMovement = true;
+            movementDirection = Vector3.back;
+            turnDirection = Vector3.back;
 
             transform.rotation = Quaternion.Euler(180f, 0f, 180f);
         }
-        if (Input.GetKey(KeyCode.LeftArrow) && !inMovement)
+
+        else if (Input.GetKey(KeyCode.LeftArrow))
         {
-            direction = Vector3.left;
-            inMovement = true;
+            movementDirection = Vector3.left;
+            turnDirection = Vector3.left;
 
             transform.rotation = Quaternion.Euler(0f, -90f, 0f);
         }
-        if (Input.GetKey(KeyCode.RightArrow) && !inMovement)
+
+        else if (Input.GetKey(KeyCode.RightArrow))
         {
-            direction = Vector3.right;
-            inMovement = true;
-            
+            movementDirection = Vector3.right;
+            turnDirection = Vector3.right;
+
             transform.rotation = Quaternion.Euler(0f, 90f, 0f);
         }
 
-        playerBody.velocity = direction * movementStep * gameSpeed;
-        inMovement = false; 
+        tankRB.velocity = movementDirection * GameManager.instance.gameSpeed * 2f;
+    }
+
+    /// <summary>
+    /// Forbids player from shooting again for time declared in GameManager
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator ShootingDelay()
+    {
+        yield return new WaitForSeconds(GameManager.instance.shootSpeed);
+        isShooting = false;
+    }
+
+    /// <summary>
+    /// Instantiates bullet at firePoint position and starts counting shooting delay time
+    /// </summary>
+    private void PlayerShoot()
+    {
+        isShooting = true;
+        StartCoroutine("ShootDelay");
+        Instantiate(bulletPrefab, firePoint.transform.position, Quaternion.identity);
     }
 }
