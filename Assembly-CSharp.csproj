@@ -36,12 +36,13 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
-     <Compile Include="Assets\Scripts\GameBoard.cs" />
-     <Compile Include="Assets\Scripts\Game.cs" />
-     <Compile Include="Assets\Scripts\TankControl.cs" />
-     <Compile Include="Assets\Scripts\GameTile.cs" />
-     <Compile Include="Assets\Scripts\GameManager.cs" />
-     <Compile Include="Assets\Scripts\BulletControl.cs" />
+     <Compile Include="Assets\Assets\Scripts\GameBoard.cs" />
+     <Compile Include="Assets\Assets\Scripts\Game.cs" />
+     <Compile Include="Assets\Assets\Scripts\TankControl.cs" />
+     <Compile Include="Assets\Assets\Scripts\GameTile.cs" />
+     <Compile Include="Assets\Assets\Scripts\BulletControl.cs" />
+     <Compile Include="Assets\Assets\Scripts\GameManager.cs" />
+     <Compile Include="Assets\Assets\Scripts\EnemyControl.cs" />
     <Reference Include="UnityEngine">
         <HintPath>C:/Program Files/Unity/Hub/Editor/2020.3.14f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>
