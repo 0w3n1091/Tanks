@@ -6,17 +6,22 @@ using UnityEngine;
 
 public class EnemyControl : MonoBehaviour
 {
+    public GameObject colliderBox;
+    public Task changeDirectionTask;
     public Rigidbody enemyRB;
     public Vector3 turnDirection = Vector3.forward;
     public List<Vector3> availableDirections = new List<Vector3>();
+    public GameTile currentTile;
+    public GameTile nextTile;
     private GameBoard board;
-    private GameTile currentTile;
+    
     
     void Start()
     {
         board = GameObject.Find("GameBoard").GetComponent<GameBoard>();
+
         SetCurrentTile();
-        GetDirectionAsync();
+        changeDirectionTask = GetDirectionAsync();
     }
 
     void Update()
@@ -30,8 +35,7 @@ public class EnemyControl : MonoBehaviour
     /// </summary>
     public void EnemyMove()
     {
-        transform.position += turnDirection * 0.003f * GameManager.instance.gameSpeed;
-        //enemyRB.AddForce(turnDirection * GameManager.instance.gameSpeed);
+        enemyRB.velocity = turnDirection * GameManager.instance.gameSpeed;
     }
 
     /// <summary>
@@ -41,12 +45,13 @@ public class EnemyControl : MonoBehaviour
     {
         foreach (GameTile tile in board.tiles)
         {
-            if((Math.Round(transform.position.x, 1) <= Math.Round(tile.transform.position.x, 1) + GameTile.tileWidth && 
-                Math.Round(transform.position.x, 1) >= Math.Round(tile.transform.position.x, 1) - GameTile.tileWidth) && 
-                (Math.Round(transform.position.z, 1) <= Math.Round(tile.transform.position.z, 1) + GameTile.tileWidth && 
-                Math.Round(transform.position.z, 1) >= Math.Round(tile.transform.position.z, 1) - GameTile.tileWidth))
+            if((Math.Round(transform.position.x, 1) < Math.Round(tile.transform.position.x, 1) + GameTile.tileWidth && 
+                Math.Round(transform.position.x, 1) > Math.Round(tile.transform.position.x, 1) - GameTile.tileWidth) && 
+                (Math.Round(transform.position.z, 1) < Math.Round(tile.transform.position.z, 1) + GameTile.tileWidth && 
+                Math.Round(transform.position.z, 1) > Math.Round(tile.transform.position.z, 1) - GameTile.tileWidth))
             {
                 currentTile = tile;
+
                 SetAvailableDirections();
                 break;
             }
@@ -66,7 +71,7 @@ public class EnemyControl : MonoBehaviour
             availableDirections.Add(Vector3.left);
         if (currentTile.north != null)
             availableDirections.Add(Vector3.forward);
-        if (currentTile.north != null)
+        if (currentTile.south != null)
             availableDirections.Add(Vector3.back);
     }
 
@@ -77,8 +82,9 @@ public class EnemyControl : MonoBehaviour
     private async Task GetDirectionAsync()
     {
         GetDirection();
-        await Task.Delay(5000);
-        GetDirectionAsync();
+
+        await Task.Delay((int)(UnityEngine.Random.Range(1.0f, 5.0f) * 1000));
+        await GetDirectionAsync();
     }
 
     /// <summary>
@@ -95,7 +101,7 @@ public class EnemyControl : MonoBehaviour
     /// <summary>
     /// Rotates enemy based on turnDirection
     /// </summary>
-    private void RotateEnemy()
+    public void RotateEnemy()
     {
         if (turnDirection == Vector3.forward)
             transform.rotation = Quaternion.Euler(0f, 0f, 0f); 
@@ -106,4 +112,24 @@ public class EnemyControl : MonoBehaviour
         if (turnDirection == Vector3.right)
             transform.rotation = Quaternion.Euler(0f, 90f, 0f);
     }
+
+    /// <summary>
+    /// Changes Rigidbody constraints after entering collision with another enemy
+    /// </summary>
+    private void OnCollisionEnter(Collision aCollision)
+    {
+        if (aCollision.gameObject.tag == "Enemy")
+        {
+            aCollision.gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition;
+        }
+    }
+    /// <summary>
+    /// Changes Rigidbody constraints after collision exit
+    /// </summary>
+    private void OnCollisionExit(Collision aCollision) 
+    {
+        enemyRB.constraints = RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotation;
+    }
+
+
 }

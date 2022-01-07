@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class TankControl : MonoBehaviour
 {
+    public GameBoard board;
+    public GameTile currentTile;
     public Rigidbody tankRB;
     public GameObject bulletPrefab;
     public Transform firePoint;
@@ -13,9 +15,14 @@ public class TankControl : MonoBehaviour
 
     private bool isShooting;
 
+    void Start()
+    {
+        board = GameObject.Find("GameBoard").GetComponent<GameBoard>();
+    }
     void Update()
     {
         PlayerMove();
+        SetCurrentTile();
         
         if (Input.GetKey(KeyCode.Space) && !isShooting)
             PlayerShoot();
@@ -81,5 +88,34 @@ public class TankControl : MonoBehaviour
         isShooting = true;
         StartCoroutine("ShootingDelay");
         Instantiate(bulletPrefab, firePoint.transform.position, Quaternion.identity);
+    }
+
+    /// <summary>
+    /// Sets current GameTile based on player position
+    /// </summary>
+    private void SetCurrentTile()
+    {
+        foreach (GameTile tile in board.tiles)
+        {
+            if((Math.Round(transform.position.x, 1) < Math.Round(tile.transform.position.x, 1) + GameTile.tileWidth && 
+                Math.Round(transform.position.x, 1) > Math.Round(tile.transform.position.x, 1) - GameTile.tileWidth) && 
+                (Math.Round(transform.position.z, 1) < Math.Round(tile.transform.position.z, 1) + GameTile.tileWidth && 
+                Math.Round(transform.position.z, 1) > Math.Round(tile.transform.position.z, 1) - GameTile.tileWidth))
+            {
+                currentTile = tile;
+                break;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Changes rigidbody constraints of enemy after collision
+    /// </summary>
+    private void OnCollisionEnter(Collision aCollision) 
+    {
+        if (aCollision.collider.name != "Collider" && aCollision.gameObject.tag == "Enemy")
+        {
+            aCollision.gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition;
+        }
     }
 }
