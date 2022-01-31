@@ -6,8 +6,6 @@ using UnityEngine;
 public class GameBoard : MonoBehaviour
 {
     public GameTile tilePrefab;
-    public GameObject enemyPrefab1;
-    public List<GameObject> enemiesPrefabs = new List<GameObject>();
     public List<GameTile> tiles = new List<GameTile>();
     public Transform ground = default;
     public int leftBottomIndex, leftTopIndex, rightBottomIndex, rightTopIndex;
@@ -19,23 +17,11 @@ public class GameBoard : MonoBehaviour
     /// <param name="aSize"> Podany rozmiar pola gry</param>
     public void Initialize(Vector2 aSize)
     {
-        FillEnemiesList();
-
         aSize = ValidateSize(aSize);
         ground.localScale = new Vector3(aSize.x, aSize.y, 1f);
         
         InstantiateTiles(aSize);
         SetNeighbours(aSize);
-
-        SpawnEnemies(aSize, 1);
-    }
-
-    /// <summary>
-    /// Fills List of enemy prefabs
-    /// </summary>
-    private void FillEnemiesList()
-    {
-        enemiesPrefabs.Add(enemyPrefab1);
     }
 
     /// <summary>
@@ -43,7 +29,7 @@ public class GameBoard : MonoBehaviour
     /// </summary>
     /// <param name="aSize"></param>
     /// <returns>Sprawdzony rozmiar pola gry</returns>
-    Vector2 ValidateSize(Vector2 aSize) 
+    private Vector2 ValidateSize(Vector2 aSize) 
     {
 		if (aSize.x < 2) 
 			aSize.x = 2;
@@ -57,7 +43,7 @@ public class GameBoard : MonoBehaviour
     /// <summary>
     /// Instancjonuje teksturę podłogi planszy
     /// </summary>
-    void InstantiateTiles(Vector2 aSize)
+    private void InstantiateTiles(Vector2 aSize)
     {
         for (float i = ((-aSize.x) / 2 + 0.5f); i <= aSize.x / 2 - 0.5f; i++)
         {
@@ -76,7 +62,7 @@ public class GameBoard : MonoBehaviour
     /// <summary>
     /// Ustawia Indexy skrajnych pozycji na planszy
     /// </summary>
-    void SetCornersIndex(GameTile aTile, Vector2 aSize, int aIndex, float aX, float aY)
+    private void SetCornersIndex(GameTile aTile, Vector2 aSize, int aIndex, float aX, float aY)
     {
         //lewy dolny
         if (aX == ((-aSize.x) / 2 + 0.5f) && aY == ((-aSize.y) / 2 + 0.5f))
@@ -99,7 +85,7 @@ public class GameBoard : MonoBehaviour
     /// Ustawia referencje sąsiadów dla każdego Tile'a
     /// </summary>
     /// <param name="aSize"></param>
-    void SetNeighbours(Vector2 aSize)
+    private void SetNeighbours(Vector2 aSize)
     {
         for (int i = 0; i < tiles.Count; i++)
         {
@@ -164,30 +150,6 @@ public class GameBoard : MonoBehaviour
                 tiles[i].north = tiles[i + 1];
                 tiles[i].south = tiles[i - 1];
             }
-        }
-    }
-    
-    /// <summary>   
-    /// Spawns enemies at random position on the map
-    /// </summary>
-    private void SpawnEnemies(Vector2 aBoardSize, int aEnemiesCount)
-    {
-        List<Transform> spawnList = new List<Transform>();
-
-        spawnList.Add(tiles[(int)aBoardSize.y - 1].transform);
-        spawnList.Add(tiles[tiles.Count - 1].transform);
-        spawnList.Add(tiles[((int)aBoardSize.y - 1) + ((int)aBoardSize.y * ((int)aBoardSize.x - 1) / 2)].transform);
-
-        for (int i = 0; i < aEnemiesCount; i++)
-        {
-            System.Random randomEnemy = new System.Random(Guid.NewGuid().GetHashCode());
-            System.Random randomPosition = new System.Random(Guid.NewGuid().GetHashCode());
-
-            Vector3 spawnPosition = new Vector3(spawnList[randomPosition.Next(spawnList.Count)].transform.position.x,
-                                                spawnList[randomPosition.Next(spawnList.Count)].transform.position.y + 0.21f,
-                                                spawnList[randomPosition.Next(spawnList.Count)].transform.position.z);
-
-            Instantiate(enemiesPrefabs[randomEnemy.Next(enemiesPrefabs.Count)], spawnPosition, Quaternion.identity);
         }
     }
 }

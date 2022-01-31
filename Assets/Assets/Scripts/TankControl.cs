@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class TankControl : MonoBehaviour
 {
+    
     public GameBoard board;
     public GameTile currentTile;
     public Rigidbody tankRB;
@@ -115,7 +116,7 @@ public class TankControl : MonoBehaviour
     {
         if (aCollision.collider.name != "Collider" && aCollision.gameObject.tag == "Enemy")
         {
-            aCollision.gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition;
+            aCollision.gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition | RigidbodyConstraints.FreezeRotation;
         }
     }
 }

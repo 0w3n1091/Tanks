@@ -6,14 +6,11 @@ using UnityEngine;
 
 public class EnemyControl : MonoBehaviour
 {
-    public GameObject colliderBox;
-    public Task changeDirectionTask;
     public Rigidbody enemyRB;
+    public GameTile currentTile;
+    private GameBoard board;
     public Vector3 turnDirection = Vector3.forward;
     public List<Vector3> availableDirections = new List<Vector3>();
-    public GameTile currentTile;
-    public GameTile nextTile;
-    private GameBoard board;
     
     
     void Start()
@@ -21,7 +18,8 @@ public class EnemyControl : MonoBehaviour
         board = GameObject.Find("GameBoard").GetComponent<GameBoard>();
 
         SetCurrentTile();
-        changeDirectionTask = GetDirectionAsync();
+        
+        _ = SetDirectionAsync();
     }
 
     void Update()
@@ -79,18 +77,18 @@ public class EnemyControl : MonoBehaviour
     /// Asynchronically gets new direction every 5 seconds
     /// </summary>
     /// <returns></returns>
-    private async Task GetDirectionAsync()
+    private async Task SetDirectionAsync()
     {
-        GetDirection();
+        SetDirection();
 
         await Task.Delay((int)(UnityEngine.Random.Range(1.0f, 5.0f) * 1000));
-        await GetDirectionAsync();
+        await SetDirectionAsync();
     }
 
     /// <summary>
     /// Randomly drawns new direction from availableDirections List of currentTile
     /// </summary>
-    private void GetDirection()
+    private void SetDirection()
     {
         System.Random random = new System.Random();
         turnDirection = availableDirections[random.Next(availableDirections.Count)];
@@ -118,9 +116,9 @@ public class EnemyControl : MonoBehaviour
     /// </summary>
     private void OnCollisionEnter(Collision aCollision)
     {
-        if (aCollision.gameObject.tag == "Enemy")
+        if (aCollision.gameObject.tag == "Enemy" && aCollision.collider.name  != "Collider")
         {
-            aCollision.gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition;
+            aCollision.gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition | RigidbodyConstraints.FreezeRotation;
         }
     }
     /// <summary>

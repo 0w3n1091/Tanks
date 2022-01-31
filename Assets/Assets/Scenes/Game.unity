@@ -171,6 +171,36 @@ Transform:
   m_Father: {fileID: 611187230052908337}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1359965936
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1359965937}
+  m_Layer: 0
+  m_Name: Enemies
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1359965937
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1359965936}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.86108565, y: 0.46070433, z: 2.877757}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1382479833
 GameObject:
   m_ObjectHideFlags: 0
@@ -201,9 +231,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5482a0dc87f3ff499aba7446c77ec18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemiesContainer: {fileID: 1359965937}
+  enemyPrefab1: {fileID: 3130141049558238245, guid: 17df10aa045106a4f862b07b5d1c523a, type: 3}
+  enemyPrefab2: {fileID: 3130141049558238245, guid: 8f3ded699f7da1941b615b245ea4791c, type: 3}
+  enemyPrefab3: {fileID: 3130141049558238245, guid: 45b36bbfc9978c342b0a64e5a109b5fb, type: 3}
+  enemyPrefab4: {fileID: 3130141049558238245, guid: 1b5b8a1a71591fd4d9273688a4fd344e, type: 3}
   gameBoard: {fileID: 2003816665}
   playerTank: {fileID: 140217389}
   boardSize: {x: 13, y: 13}
+  enemiesPrefabs: []
+  enemiesList: []
 --- !u!4 &1382479835
 Transform:
   m_ObjectHideFlags: 0
@@ -310,7 +347,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1805771667}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 11, z: 0}
+  m_LocalPosition: {x: 0, y: 12, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -346,8 +383,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tilePrefab: {fileID: 1028320853693080865, guid: 67117c91dddb1d745b4276c7816edf19, type: 3}
-  enemyPrefab1: {fileID: 3130141049558238245, guid: 17df10aa045106a4f862b07b5d1c523a, type: 3}
-  enemiesPrefabs: []
   tiles: []
   ground: {fileID: 2048323737}
   leftBottomIndex: 0
