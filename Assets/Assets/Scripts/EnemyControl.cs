@@ -11,6 +11,7 @@ public class EnemyControl : MonoBehaviour
     private GameBoard board;
     public Vector3 turnDirection = Vector3.forward;
     public List<Vector3> availableDirections = new List<Vector3>();
+    public int health;
     
     
     void Start()
@@ -111,22 +112,35 @@ public class EnemyControl : MonoBehaviour
             transform.rotation = Quaternion.Euler(0f, 90f, 0f);
     }
 
+    private void EnemyHit()
+    {
+        health--;
+
+        if (health == 0)
+            Destroy(this.gameObject);
+    }
+
     /// <summary>
-    /// Changes Rigidbody constraints after entering collision with another enemy
+    /// Updates enemyRB constaints with given parameter
     /// </summary>
+    private void UpdateRBConstraints(RigidbodyConstraints aConstraints)
+    {
+        enemyRB.constraints = aConstraints;
+    }
+
     private void OnCollisionEnter(Collision aCollision)
     {
         if (aCollision.gameObject.tag == "Enemy" && aCollision.collider.name  != "Collider")
-        {
-            aCollision.gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition | RigidbodyConstraints.FreezeRotation;
-        }
+            UpdateRBConstraints(RigidbodyConstraints.FreezePosition | RigidbodyConstraints.FreezeRotation);
+        
+        if (aCollision.gameObject.tag == "Bullet")
+            EnemyHit();
     }
-    /// <summary>
-    /// Changes Rigidbody constraints after collision exit
-    /// </summary>
+    
     private void OnCollisionExit(Collision aCollision) 
     {
-        enemyRB.constraints = RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotation;
+        if (aCollision.gameObject.tag == "Enemy")
+            UpdateRBConstraints(RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotation);
     }
 
 
