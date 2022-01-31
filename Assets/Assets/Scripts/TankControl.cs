@@ -13,6 +13,7 @@ public class TankControl : MonoBehaviour
     public Transform firePoint;
     [HideInInspector]
     public Vector3 turnDirection = Vector3.forward;
+    public int playerHealth;
 
     private bool isShooting;
 
@@ -88,7 +89,27 @@ public class TankControl : MonoBehaviour
     {
         isShooting = true;
         StartCoroutine("ShootingDelay");
-        Instantiate(bulletPrefab, firePoint.transform.position, Quaternion.identity);
+        GameObject playerBullet = Instantiate(bulletPrefab, firePoint.transform.position, Quaternion.identity);
+        playerBullet.GetComponent<BulletControl>().direction = turnDirection;
+    }
+
+    /// <summary>
+    /// Substract playerHealt after enemy hit
+    /// </summary>
+    private void PlayerHit()
+    {
+        playerHealth--;
+
+        if (playerHealth <= 0)
+            PlayerDeath();
+    }
+
+    /// <summary>
+    /// Kills player
+    /// </summary>
+    private void PlayerDeath()
+    {
+        Destroy(this.gameObject);
     }
 
     /// <summary>
@@ -117,6 +138,11 @@ public class TankControl : MonoBehaviour
         if (aCollision.collider.name != "Collider" && aCollision.gameObject.tag == "Enemy")
         {
             aCollision.gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePosition | RigidbodyConstraints.FreezeRotation;
+        }
+
+        if (aCollision.gameObject.tag == "BulletEnemy")
+        {
+            PlayerHit();
         }
     }
 }

@@ -7,15 +7,11 @@ public class BulletControl : MonoBehaviour
     
     public Rigidbody bulletRB;
     private TankControl player;
-    private Vector3 direction;
+    public Vector3 direction;
 
     void Start()
     {
-        player = GameObject.Find("Player").GetComponent<TankControl>();
-
-        direction = player.turnDirection;
         Destroy(gameObject, 3f);
-
     }
 
     void Update()

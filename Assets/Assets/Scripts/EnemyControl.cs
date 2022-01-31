@@ -112,12 +112,23 @@ public class EnemyControl : MonoBehaviour
             transform.rotation = Quaternion.Euler(0f, 90f, 0f);
     }
 
+    /// <summary>
+    /// Substract enemy health after player hit
+    /// </summary>
     private void EnemyHit()
     {
         health--;
 
         if (health == 0)
-            Destroy(this.gameObject);
+            KillEnemy();
+    }
+
+    /// <summary>
+    /// Kills enemy by destroying his gameObject
+    /// </summary>
+    private void KillEnemy()
+    {
+        Destroy(this.gameObject);
     }
 
     /// <summary>
@@ -133,7 +144,7 @@ public class EnemyControl : MonoBehaviour
         if (aCollision.gameObject.tag == "Enemy" && aCollision.collider.name  != "Collider")
             UpdateRBConstraints(RigidbodyConstraints.FreezePosition | RigidbodyConstraints.FreezeRotation);
         
-        if (aCollision.gameObject.tag == "Bullet")
+        if (aCollision.gameObject.tag == "BulletPlayer")
             EnemyHit();
     }
     

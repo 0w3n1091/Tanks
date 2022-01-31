@@ -141,6 +141,7 @@ MonoBehaviour:
   bulletPrefab: {fileID: 6919664568096880608, guid: 01dcacf80fda20e4f832bec6c5678d1a, type: 3}
   firePoint: {fileID: 1210221989}
   turnDirection: {x: 0, y: 0, z: 0}
+  playerHealth: 1
 --- !u!1 &1210221988
 GameObject:
   m_ObjectHideFlags: 0

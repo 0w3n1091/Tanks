@@ -43,6 +43,7 @@
      <Compile Include="Assets\Assets\Scripts\BulletControl.cs" />
      <Compile Include="Assets\Assets\Scripts\GameManager.cs" />
      <Compile Include="Assets\Assets\Scripts\EnemyControl.cs" />
+     <Compile Include="Assets\Assets\Scripts\EnemyAttack.cs" />
     <Reference Include="UnityEngine">
         <HintPath>C:/Program Files/Unity/Hub/Editor/2020.3.14f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>
