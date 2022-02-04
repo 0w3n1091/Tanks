@@ -5,16 +5,19 @@ using UnityEngine;
 
 public class TankControl : MonoBehaviour
 {
-    
     public GameBoard board;
-    public GameTile currentTile;
     public Rigidbody tankRB;
     public GameObject bulletPrefab;
     public Transform firePoint;
-    [HideInInspector]
-    public Vector3 turnDirection = Vector3.forward;
+   
     public int playerHealth;
+    public int shootDelay;
+    public int weaponDamage;
+    public float moveSpeed;
+    public bool isImmune;
 
+    private GameTile currentTile;
+    private Vector3 turnDirection = Vector3.forward;
     private bool isShooting;
 
     void Start()
@@ -69,7 +72,7 @@ public class TankControl : MonoBehaviour
             transform.rotation = Quaternion.Euler(0f, 90f, 0f);
         }
 
-        tankRB.velocity = movementDirection * GameManager.instance.gameSpeed * 2f;
+        tankRB.velocity = movementDirection * moveSpeed;
     }
 
     /// <summary>
@@ -78,7 +81,7 @@ public class TankControl : MonoBehaviour
     /// <returns></returns>
     private IEnumerator ShootingDelay()
     {
-        yield return new WaitForSeconds(GameManager.instance.shootSpeed);
+        yield return new WaitForSeconds(shootDelay);
         isShooting = false;
     }
 
@@ -88,17 +91,18 @@ public class TankControl : MonoBehaviour
     private void PlayerShoot()
     {
         isShooting = true;
-        StartCoroutine("ShootingDelay");
+        StartCoroutine(ShootingDelay());
         GameObject playerBullet = Instantiate(bulletPrefab, firePoint.transform.position, Quaternion.identity);
         playerBullet.GetComponent<BulletControl>().direction = turnDirection;
     }
 
     /// <summary>
-    /// Substract playerHealt after enemy hit
+    /// Substract playerHealth after enemy hit
     /// </summary>
     private void PlayerHit()
     {
         playerHealth--;
+        weaponDamage--;
 
         if (playerHealth <= 0)
             PlayerDeath();
@@ -130,9 +134,6 @@ public class TankControl : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Changes rigidbody constraints of enemy after collision
-    /// </summary>
     private void OnCollisionEnter(Collision aCollision) 
     {
         if (aCollision.collider.name != "Collider" && aCollision.gameObject.tag == "Enemy")
@@ -144,5 +145,28 @@ public class TankControl : MonoBehaviour
         {
             PlayerHit();
         }
+    }
+
+    private void OnCollisionExit(Collision aCollision)
+    {
+        if (aCollision.collider.name != "Collider" && aCollision.gameObject.tag == "Enemy")
+        {
+            aCollision.gameObject.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotation;
+        }
+    }
+
+    private void OnTriggerEnter(Collider aCollider)
+    {
+        if (aCollider.gameObject.tag == "WeaponPowerUp")
+            GameManager.Instance.OnWeaponPowerUpCatch(aCollider.gameObject);
+
+        if (aCollider.gameObject.tag == "TimePowerUp")
+            GameManager.Instance.OnTimePowerUpCatch(aCollider.gameObject);
+
+        if (aCollider.gameObject.tag == "ClearPowerUp")
+            GameManager.Instance.OnClearPowerUpCatch(aCollider.gameObject);
+        
+        if (aCollider.gameObject.tag == "ImmunePowerUp")
+            GameManager.Instance.OnImmunePowerUpCatch(aCollider.gameObject);
     }
 }

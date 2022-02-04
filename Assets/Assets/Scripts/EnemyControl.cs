@@ -11,7 +11,12 @@ public class EnemyControl : MonoBehaviour
     private GameBoard board;
     public Vector3 turnDirection = Vector3.forward;
     public List<Vector3> availableDirections = new List<Vector3>();
+
     public int health;
+    public int minDirectionChangeDelay;
+    public int maxDirectionChangeDelay;
+
+    public float moveSpeed;
     
     
     void Start()
@@ -20,12 +25,13 @@ public class EnemyControl : MonoBehaviour
 
         SetCurrentTile();
         
-        _ = SetDirectionAsync();
+        StartCoroutine(SetDirectionAsync());
     }
 
     void Update()
     {
         SetCurrentTile();
+
         EnemyMove();
     }
 
@@ -34,7 +40,10 @@ public class EnemyControl : MonoBehaviour
     /// </summary>
     public void EnemyMove()
     {
-        enemyRB.velocity = turnDirection * GameManager.instance.gameSpeed;
+        if (GameManager.Instance.isPaused)
+            enemyRB.velocity = Vector3.zero;
+        else
+            enemyRB.velocity = turnDirection * moveSpeed;
     }
 
     /// <summary>
@@ -75,15 +84,24 @@ public class EnemyControl : MonoBehaviour
     }
 
     /// <summary>
-    /// Asynchronically gets new direction every 5 seconds
+    /// Asynchronically gets new direction
     /// </summary>
     /// <returns></returns>
-    private async Task SetDirectionAsync()
+    private IEnumerator SetDirectionAsync()
     {
-        SetDirection();
+        while(true)
+        {
+            if (!GameManager.Instance.isPaused)
+            {
+                SetDirection();
 
-        await Task.Delay((int)(UnityEngine.Random.Range(1.0f, 5.0f) * 1000));
-        await SetDirectionAsync();
+                yield return new WaitForSeconds(UnityEngine.Random.Range(minDirectionChangeDelay, maxDirectionChangeDelay));
+            }
+            else
+            {
+                yield return null;
+            }
+        }
     }
 
     /// <summary>
@@ -113,13 +131,13 @@ public class EnemyControl : MonoBehaviour
     }
 
     /// <summary>
-    /// Substract enemy health after player hit
+    /// Substract enemy health after player hit for given damage
     /// </summary>
-    private void EnemyHit()
+    private void EnemyHit(int aDamage)
     {
-        health--;
-
-        if (health == 0)
+        health -= aDamage;
+        
+        if (health == 0)    
             KillEnemy();
     }
 
@@ -145,7 +163,7 @@ public class EnemyControl : MonoBehaviour
             UpdateRBConstraints(RigidbodyConstraints.FreezePosition | RigidbodyConstraints.FreezeRotation);
         
         if (aCollision.gameObject.tag == "BulletPlayer")
-            EnemyHit();
+            EnemyHit(aCollision.gameObject.GetComponent<BulletControl>().damage);
     }
     
     private void OnCollisionExit(Collision aCollision) 

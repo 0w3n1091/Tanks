@@ -9,6 +9,10 @@ TagManager:
   - BulletPlayer
   - BulletEnemy
   - Bullet
+  - ClearPowerUp
+  - TimePowerUp
+  - WeaponPowerUp
+  - ImmunePowerUp
   layers:
   - Default
   - TransparentFX

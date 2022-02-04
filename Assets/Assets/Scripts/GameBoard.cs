@@ -3,20 +3,40 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[ExecuteInEditMode]
 public class GameBoard : MonoBehaviour
 {
     public GameTile tilePrefab;
     public List<GameTile> tiles = new List<GameTile>();
     public Transform ground = default;
-    public int leftBottomIndex, leftTopIndex, rightBottomIndex, rightTopIndex;
-    
-    
+    public Vector2 boardSize;
+    public bool initialize = false;
+
+
+    private int leftBottomIndex, leftTopIndex, rightBottomIndex, rightTopIndex;
+
+    void Update()
+    {
+        if (initialize && !Application.isPlaying)
+        {
+            initialize = false;
+            Initialize(boardSize);
+        }
+    }
+        
     /// <summary>
     /// Inicjalizuje pole do gry o podanej powierzchni
     /// </summary>
     /// <param name="aSize"> Podany rozmiar pola gry</param>
     public void Initialize(Vector2 aSize)
     {
+        foreach (GameTile child in tiles)
+        {
+            DestroyImmediate(child.gameObject);
+        }
+
+        tiles.Clear();
+
         aSize = ValidateSize(aSize);
         ground.localScale = new Vector3(aSize.x, aSize.y, 1f);
         

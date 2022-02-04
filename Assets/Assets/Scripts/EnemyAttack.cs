@@ -6,10 +6,10 @@ public class EnemyAttack : MonoBehaviour
 {
     public Transform firePoint;
     public GameObject enemyBulletPrefab;
+    
     public int maxShootingInterval;
     public int minShootingInterval;
 
-    
     void Start()
     {
        StartCoroutine(ShootCoroutine()); 
@@ -23,6 +23,10 @@ public class EnemyAttack : MonoBehaviour
         while(true)
         {
             yield return new WaitForSeconds(Random.Range(minShootingInterval, maxShootingInterval));
+            
+            if (GameManager.Instance.isPaused)
+                yield return new WaitForSeconds(GameManager.Instance.powerUpDuration);
+
             GameObject enemyBullet = Instantiate(enemyBulletPrefab, firePoint.position, Quaternion.identity);
             enemyBullet.GetComponent<BulletControl>().direction = GetComponent<EnemyControl>().turnDirection;
         }
