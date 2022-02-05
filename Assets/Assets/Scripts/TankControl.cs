@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class TankControl : MonoBehaviour
 {
@@ -113,7 +114,7 @@ public class TankControl : MonoBehaviour
     /// </summary>
     private void PlayerDeath()
     {
-        Destroy(this.gameObject);
+        SceneManager.LoadScene("Game");
     }
 
     /// <summary>
